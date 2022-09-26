@@ -1,5 +1,3 @@
-from email.policy import default
-from random import choices
 from unicodedata import category
 from venv import create
 from django.db import models
@@ -7,7 +5,7 @@ from django.db import models
 # Create your models here.
 
 
-class UpdateCreateDate(models.Models):
+class UpdateCreateDate(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -23,6 +21,10 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "Categories"
+
+    @property
+    def quiz_count(self):
+        return self.quiz_set.count()
 
 
 class Quiz(models.Model):
@@ -40,14 +42,14 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     SCALE = (
-        ('B', 'Beginner')
-        ('I', 'Intermediate')
-        ('A', 'Advanced')
+        ('B', 'Beginner'),
+        ('I', 'Intermediate'),
+        ('A', 'Advanced'),
     )
 
     title = models.TextField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    title = models.Charfield(max_length=1, choices=SCALE)
+    difficulty = models.CharField(max_length=1, choices=SCALE, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -56,7 +58,7 @@ class Question(models.Model):
 
 
 class Option(models.Model):
-    option_text = models.Charfield(max_length=200)
+    option_text = models.CharField(max_length=200)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     is_right = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
