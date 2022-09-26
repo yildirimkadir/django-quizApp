@@ -24,7 +24,7 @@ class Category(models.Model):
 
     @property
     def quiz_count(self):
-        return self.quiz_set.count()
+        return self.quiz_set.count()  # hoca burda related name verip
 
 
 class Quiz(models.Model):
@@ -38,6 +38,10 @@ class Quiz(models.Model):
 
     class Meta:
         verbose_name_plural = "Quizzes"
+
+    @property
+    def question_count(self):
+        return self.question_set.count()
 
 
 class Question(models.Model):
@@ -59,7 +63,8 @@ class Question(models.Model):
 
 class Option(models.Model):
     option_text = models.CharField(max_length=200)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name='options')
     is_right = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
